@@ -1,0 +1,38 @@
+CREATE TABLE "cities" (
+  "id" INTEGER NOT NULL,
+  "name" TEXT NOT NULL UNIQUE,
+  "slug" INTEGER NOT NULL UNIQUE,
+  "location" TEXT,
+  "country" TEXT NOT NULL,
+  PRIMARY KEY("id" AUTOINCREMENT)
+);
+
+CREATE TABLE "parkings" (
+  "id" INTEGER NOT NULL,
+  "name" TEXT NOT NULL UNIQUE,
+  "location" TEXT,
+  "numberOfPlaces" INTEGER NOT NULL,
+  "opened" INTEGER NOT NULL DEFAULT 1,
+  "hourlyRate" INTEGER NOT NULL,
+  "city_id" INTEGER NOT NULL,
+  PRIMARY KEY("id" AUTOINCREMENT),
+  FOREIGN KEY("city_id") REFERENCES "cities"("id")
+);
+
+CREATE TABLE "spots" (
+  "id" INTEGER NOT NULL,
+  "parking_id" INTEGER NOT NULL,
+  PRIMARY KEY("id" AUTOINCREMENT),
+  FOREIGN KEY("parking_id") REFERENCES "parkings"("id")
+);
+
+CREATE TABLE "parks" (
+  "id" TEXT NOT NULL,
+  "startedAt" TEXT NOT NULL,
+  "endedAt" TEXT,
+  "vehicleNumberPlate" TEXT,
+  "spot_id" INTEGER NOT NULL,
+  PRIMARY KEY("id"),
+  FOREIGN KEY("spot_id") REFERENCES "spots"("id")
+);
+

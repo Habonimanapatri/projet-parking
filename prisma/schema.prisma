@@ -1,0 +1,46 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./parking.sqlite"  // Connexion au fichier SQLite
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model City {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  slug     String   @unique
+  location String?
+  country  String
+  parkings Parking[]
+}
+
+model Parking {
+  id             Int      @id @default(autoincrement())
+  name           String   @unique
+  location       String?
+  numberOfPlaces Int
+  opened         Boolean
+  hourlyRate     Float
+  city_id        Int
+  city           City     @relation(fields: [city_id], references: [id])
+  spots          Spot[]
+}
+
+model Spot {
+  id         Int      @id @default(autoincrement())
+  parking_id Int
+  parking    Parking  @relation(fields: [parking_id], references: [id])
+}
+
+model Park {
+  id                 String   @id
+  startedAt          DateTime
+  endedAt            DateTime?
+  vehicleNumberPlate String
+  spot_id            Int
+  spot               Spot     @relation(fields: [spot_id], references: [id])
+}

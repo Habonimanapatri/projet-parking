@@ -11,11 +11,14 @@ export const ReadAllParkingsController = (c: Context) => {
 import { Context } from 'hono';
 import db from '../../db/sqlite';
 import { ReadAllParkingsView } from '../../views/parking/ReadAllParkingsView';
+import { Parking } from '../../models/Parking';
+import { parkings } from '../../data/staticDatabase';
 
 export const ReadAllParkingsController = async (c: Context) => {
   try {
     // Exécuter la requête SQL pour récupérer les parkings depuis SQLite
-    const rows = db.query('SELECT * FROM parkings').all();
+    //const rows = db.query('SELECT * FROM parkings').all();
+    const rows = await db.query('SELECT * FROM parkings').all();
 
     // Si aucune donnée n'est trouvée, gérer l'absence de résultats
     if (!rows.length) {
@@ -23,7 +26,7 @@ export const ReadAllParkingsController = async (c: Context) => {
     }
 
     // Générer la vue avec les parkings
-    const html = ReadAllParkingsView(rows);
+    const html = ReadAllParkingsView(parkings);
     return c.html(html);
   } catch (error) {
     console.error(error); 

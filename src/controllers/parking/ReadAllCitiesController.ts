@@ -16,10 +16,12 @@ import { ReadAllCitiesView } from '../../views/city/ReadAllCitiesView';
 export const ReadAllCitiesController = async (c: Context) => {
   try {
     // Exécuter la requête SQL pour récupérer les villes depuis SQLite
-    const rows = db.query('SELECT * FROM cities').all();
+    const query = await db.query('SELECT * FROM cities').as(City);
 
     // Convertir les données SQLite en instances de City
-    const cities = rows.map(row => new City(row.id, row.name, row.country, JSON.parse(row.location)));
+    const cities = query.all();
+    
+    //rows.map(row => new City(row.id, row.name, row.country, JSON.parse(row.location)));
 
     // Générer la vue avec les villes
     const html = ReadAllCitiesView(cities);

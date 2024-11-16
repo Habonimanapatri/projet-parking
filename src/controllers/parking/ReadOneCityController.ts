@@ -30,16 +30,18 @@ import db from '../../db/sqlite';
 import { City } from '../../models/City';
 import { ReadOneCityView } from '../../views/city/ReadOneCityView';
 
+
 export const ReadOneCityController = async (c: Context) => {
   const { slug } = c.req.param();
 
   try {
     // Récupérer la ville en fonction du slug
-    const row = db.query('SELECT * FROM cities WHERE slug = ?').get(slug);
+    const query = await db.query('SELECT * FROM cities WHERE slug = ?').as(City);
 
-    if (row) {
-      const city = new City(row.id, row.name, row.country, JSON.parse(row.location));
-      const html = ReadOneCityView(city);
+    const city = query.get(slug)
+
+    if (city) {
+      const html = ReadOneCityView(city,[]);
       return c.html(html);
     } else {
       return c.text('City not found', 404);

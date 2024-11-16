@@ -24,13 +24,15 @@ export const ReadOneParkingController = (c: Context) => {
 import { Context } from 'hono';
 import db from '../../db/sqlite';
 import { ReadOneParkingView } from '../../views/parking/ReadOneParkingView';
+import { parkings } from '../../data/staticDatabase';
+import { Parking } from '../../models/Parking';
 
-export const ReadOneParkingController = async (c: Context) => {
+/* export const ReadOneParkingController = async (c: Context) => {
   const { id } = c.req.param();
 
   try {
     // Exécuter la requête SQL pour récupérer un parking spécifique
-    const row = db.query('SELECT * FROM parkings WHERE id = ?').get(id);
+    const row = await db.query('SELECT * FROM parkings WHERE id = ?').get(id);
 
     // Si le parking n'est pas trouvé, renvoyer une erreur 404
     if (!row) {
@@ -38,10 +40,33 @@ export const ReadOneParkingController = async (c: Context) => {
     }
 
     // Générer la vue avec les détails du parking
-    const html = ReadOneParkingView(row);
+    //const html = ReadOneParkingView(row); 
+    const html = ReadOneParkingView(Parking,[]);
     return c.html(html);
   } catch (error) {
     console.error(error); 
     return c.text('Error fetching parking', 500); 
   }
+}; */
+
+export const ReadOneParkingController = async (c: Context) => {
+  const { slug } = c.req.param();
+
+  try {
+    // Récupérer la ville en fonction du slug
+    const query = await db.query('SELECT * FROM parkings WHERE slug = ?').as(Parking);
+
+    const city = query.get(slug)
+
+    if (city) {
+      const html = ReadOneParkingView(Parking,[]);
+      return c.html(html);
+    } else {
+      return c.text('City not found', 404);
+    }
+  } catch (error) {
+    console.error(error);
+    return c.text('Error fetching city', 500);
+  }
 };
+
